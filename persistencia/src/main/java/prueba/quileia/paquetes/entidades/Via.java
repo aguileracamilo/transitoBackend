@@ -1,10 +1,11 @@
 package prueba.quileia.paquetes.entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,11 +20,27 @@ public class Via {
     @Column(name = "idVia", length=10, nullable = false, unique = true)
     private int idVia;
 
-    private String tipoVia;
+    @Enumerated(EnumType.STRING)
+    @JsonIgnore
+    @Column(nullable = false)
+    private TipoVia tipoVia;
 
-    private String tipoCalle;
+    @Enumerated(EnumType.STRING)
+    @JsonIgnore
+    @Column(nullable = false)
+    private TipoCalle tipoCalle;
 
+    @Column(name = "numeroRuta", nullable = false)
     private int numeroRuta;
+
+    @Column(name = "nivelCongestion", nullable = false)
+    @Size(min = 0,max = 100, message = "El nivel de congestion es maximo 100")
+    private double nivelCongestion;
+
+
+    @OneToMany(mappedBy = "viaAsignada")
+    private List<Agente> agentes;
+
 
 
 

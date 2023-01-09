@@ -27,7 +27,11 @@ public class Agente {
     private String codigoSecretaria;
 
 
-  //  private int viaAsignada;
+    @ToString.Exclude
+    @ManyToOne
+    @JoinColumn(name = "viaAsignada",nullable = false)
+    private Via viaAsignada;
+
 
 
 
