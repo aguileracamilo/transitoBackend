@@ -5,6 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <modules>
         <module>persistencia</module>
+        <module>negocio</module>
     </modules>
 
     <parent>
@@ -13,14 +14,17 @@
         <version>2.6.0</version>
         <relativePath/>
     </parent>
+
     <packaging>pom</packaging>
+
     <groupId>prueba.quileia</groupId>
-    <artifactId>backend-transito</artifactId>
+    <artifactId>transito-backend</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <name>Backend Asignaccion de vias</name>
     <description>Este proyecto es una prueba que contiene el backend de una aplicación web de tránsito en que
         la que se puede asignar vías a los agentes de tránsito
     </description>
-    <version>1.0-SNAPSHOT</version>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -32,8 +36,10 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <properties>
         <java.version>11</java.version>
     </properties>
+
 
 </project>
