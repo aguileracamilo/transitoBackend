@@ -29,7 +29,7 @@ public class Agente {
 
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "viaAsignada",nullable = false)
+    @JoinColumn(name = "viaAsignada",nullable = true)
     private Via viaAsignada;
 
 
