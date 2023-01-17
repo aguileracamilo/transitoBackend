@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import prueba.quileia.paquetes.DTO.AgenteDTO;
 import prueba.quileia.paquetes.entidades.Agente;
 import prueba.quileia.paquetes.servicio.AgenteServicio;
 
@@ -20,27 +21,58 @@ public class AgenteRestController {
 
     @CrossOrigin
     @GetMapping("/TodosAgentes")
-    public List<Agente> enviarAgentes() throws JsonProcessingException {
+    public List<AgenteDTO> enviarAgentes() throws JsonProcessingException {
 
-        return agenteServicio.enlistarAgentes();
+
+        return agenteServicio.agenteToDTO(agenteServicio.enlistarAgentes());
     }
+
     @CrossOrigin
     @PostMapping("/RegistrarAgente")
-    public String registrarAgente(@RequestHeader("nombre") String nombre, @RequestHeader("experiencia") double experiencia,@RequestHeader("codigo") String codigo,@RequestHeader("codigo_secretaria") String codigoSecretaria,@RequestHeader("via_asignada") String viaAsignada) {
+    public String registrarAgente(@RequestHeader("nombre") String nombre, @RequestHeader("experiencia") double experiencia, @RequestHeader("codigo") String codigo, @RequestHeader("codigo_secretaria") String codigoSecretaria, @RequestHeader("via_asignada") int viaAsignada) {
+        System.out.println("entraoo");
 
-        Agente agente= new Agente(codigo,nombre,experiencia,codigoSecretaria,null);
-        agenteServicio.crearAgente(agente);
+        String respuesta;
+        boolean existe = agenteServicio.existeAgente(codigo);
+        System.out.println(codigo + nombre + experiencia);
+        if (existe) {
+            respuesta = "Ya existe";
+        } else {
+            Agente agente = new Agente(codigo, nombre, experiencia, codigoSecretaria, null);
+            agenteServicio.crearAgente(agente, viaAsignada);
 
-        boolean existe = agenteServicio.existeAgente(agente.getCodigo());
+            existe = agenteServicio.existeAgente(agente.getCodigo());
 
-        if(existe==true){
-            return "Registrado" ;
-        }else{
-            return "error";
+            if (existe == true) {
+                respuesta = "Registrado";
+            } else {
+                respuesta = "error";
+            }
+        }
+
+        return respuesta;
+
+    }
+
+    @CrossOrigin
+    @PostMapping("/ActualizarAgente")
+    public String actualizarAgente(@RequestHeader("nombre") String nombre, @RequestHeader("experiencia") double experiencia, @RequestHeader("codigo") String codigo, @RequestHeader("codigo_nuevo") String codigoNuevo, @RequestHeader("codigo_secretaria") String codigoSecretaria, @RequestHeader("via_asignada") int viaAsignada) {
+        boolean existe = agenteServicio.existeAgente(codigo);
+        if (existe == true) {
+            Agente agente = new Agente(codigo, nombre, experiencia, codigoSecretaria, null);
+            System.out.println(codigo + "  " + codigoNuevo);
+            agenteServicio.actualizarAgente(agente, viaAsignada, codigoNuevo);
+            return "Actualizado";
+
+
+        } else {
+
+            return "no existe";
         }
 
 
     }
+
 
     @CrossOrigin
     @PostMapping("/EliminarAgente")
@@ -51,9 +83,9 @@ public class AgenteRestController {
 
         boolean existe = agenteServicio.existeAgente(codigo);
 
-        if(existe==true){
-            return "Eliminado" ;
-        }else{
+        if (existe == false) {
+            return "Eliminado";
+        } else {
             return "error";
         }
 

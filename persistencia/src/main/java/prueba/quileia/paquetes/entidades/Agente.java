@@ -10,7 +10,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(callSuper = true)
 public class Agente {
 
     @Id
@@ -26,15 +25,14 @@ public class Agente {
     @Column(name = "codigoSecretaria", length=10, nullable = false)
     private String codigoSecretaria;
 
-
-    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "viaAsignada",nullable = true)
     private Via viaAsignada;
 
-
-
-
+    @Override
+    public String toString() {
+        return "Agente [codigo=" + codigo + ", nombre=" + nombre + ", experienciaAnios=" + experienciaAnios + ", codigoSecretaria=" + codigoSecretaria + ", viaAsignadaId=" + (viaAsignada != null ? viaAsignada.getIdVia() : "null") + "]";
+    }
 
 
 }
