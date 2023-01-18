@@ -37,7 +37,7 @@ public class Via {
     @Column(name = "nivelCongestion", nullable = false)
     private double nivelCongestion;
 
-
+    @JsonIgnore
     @OneToMany(mappedBy = "viaAsignada")
     private List<Agente> agentes;
 

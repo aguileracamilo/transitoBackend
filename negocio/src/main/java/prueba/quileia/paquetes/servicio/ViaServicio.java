@@ -12,10 +12,11 @@ public interface ViaServicio {
 
     boolean existeVia(int codigoVia);
 
-    void crearVia(Via via);
+    void crearVia(Via via,List<String> agentes);
 
     void eliminarVia(int idVia);
 
     TipoVia getTipoVia(String tipo);
     TipoCalle getTipoCalle(String tipo);
+    void actualizarAgente(Via via, List<String> agentes, int idNueva);
 }

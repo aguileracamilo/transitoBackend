@@ -29,8 +29,6 @@ public class AgenteServicioImpl implements AgenteServicio {
                 agenteRepo.actualizarVia(agente.getCodigo(), idVia);
             }
         }
-
-
     }
 
     public boolean estaCompleto(Agente a) {
