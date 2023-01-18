@@ -16,11 +16,8 @@ public class ViaServicioImpl implements ViaServicio {
     private ViaRepo viaRepo;
 
     public boolean existeVia(int codigoVia) {
-        boolean existe = false;
-        if (viaRepo.findById(codigoVia) != null) {
-            existe = true;
-        }
-        return existe;
+
+        return viaRepo.existsById(codigoVia);
 
     }
 
@@ -43,5 +40,36 @@ public class ViaServicioImpl implements ViaServicio {
     public void eliminarVia(int idVia) {
 
         viaRepo.eliminarViaPorId(idVia);
+    }
+
+    @Override
+    public TipoVia getTipoVia(String tipo) {
+        TipoVia tipoViaEnum = null;
+        switch (tipo) {
+            case "opcion1":
+                tipoViaEnum = TipoVia.AUTOPISTA;
+                break;
+            case "opcion2":
+                tipoViaEnum = TipoVia.CARRETERA_PRINCIPAL;
+                break;
+            case "opcion3":
+                tipoViaEnum = TipoVia.CARRETERA_SECUNDARIA;
+                break;
+        }
+        return tipoViaEnum;
+    }
+
+    @Override
+    public TipoCalle getTipoCalle(String tipo) {
+        TipoCalle tipoCalleEnum = null;
+        switch (tipo) {
+            case "opcion1":
+                tipoCalleEnum = TipoCalle.CARRERA;
+                break;
+            case "opcion2":
+                tipoCalleEnum = TipoCalle.CARRERA;
+                break;
+        }
+        return tipoCalleEnum;
     }
 }

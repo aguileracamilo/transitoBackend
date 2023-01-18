@@ -30,11 +30,9 @@ public class AgenteRestController {
     @CrossOrigin
     @PostMapping("/RegistrarAgente")
     public String registrarAgente(@RequestHeader("nombre") String nombre, @RequestHeader("experiencia") double experiencia, @RequestHeader("codigo") String codigo, @RequestHeader("codigo_secretaria") String codigoSecretaria, @RequestHeader("via_asignada") int viaAsignada) {
-        System.out.println("entraoo");
-
         String respuesta;
         boolean existe = agenteServicio.existeAgente(codigo);
-        System.out.println(codigo + nombre + experiencia);
+
         if (existe) {
             respuesta = "Ya existe";
         } else {
@@ -58,9 +56,10 @@ public class AgenteRestController {
     @PostMapping("/ActualizarAgente")
     public String actualizarAgente(@RequestHeader("nombre") String nombre, @RequestHeader("experiencia") double experiencia, @RequestHeader("codigo") String codigo, @RequestHeader("codigo_nuevo") String codigoNuevo, @RequestHeader("codigo_secretaria") String codigoSecretaria, @RequestHeader("via_asignada") int viaAsignada) {
         boolean existe = agenteServicio.existeAgente(codigo);
+        System.out.println(nombre+" "+codigo+" "+codigoSecretaria+" "+viaAsignada+" "+experiencia);
         if (existe == true) {
             Agente agente = new Agente(codigo, nombre, experiencia, codigoSecretaria, null);
-            System.out.println(codigo + "  " + codigoNuevo);
+
             agenteServicio.actualizarAgente(agente, viaAsignada, codigoNuevo);
             return "Actualizado";
 

@@ -33,7 +33,7 @@ public class Via {
     @Column(name = "numeroRuta", nullable = false)
     private int numeroRuta;
     @Min(value = 0)
-    @Max(value = 10)
+    @Max(value = 100)
     @Column(name = "nivelCongestion", nullable = false)
     private double nivelCongestion;
 

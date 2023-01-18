@@ -40,42 +40,24 @@ public class ViaRestController {
     public String registrarVia(@RequestHeader("id_via") int idVia, @RequestHeader("tipo_via") String tipoVia, @RequestHeader("tipo_calle") String tipoCalle, @RequestHeader("numero_ruta") int numeroRuta, @RequestHeader("nivel_congestion") double nivelCongestion) {
         System.out.println(idVia + " " + tipoVia + " " + tipoCalle + " " + numeroRuta + " " + nivelCongestion);
         boolean existe = false;
-        TipoVia tipoViaEnum = null;
-        TipoCalle tipoCalleEnum = null;
-        switch (tipoVia) {
-            case "opcion1":
-                tipoViaEnum = TipoVia.AUTOPISTA;
-                break;
-            case "opcion2":
-                tipoViaEnum = TipoVia.CARRETERA_PRINCIPAL;
-                break;
-            case "opcion3":
-                tipoViaEnum = TipoVia.CARRETERA_SECUNDARIA;
-                break;
-        }
-        switch (tipoVia) {
-            case "opcion1":
-                tipoCalleEnum = TipoCalle.CARRERA;
-                break;
-            case "opcion2":
-                tipoCalleEnum = TipoCalle.CARRERA;
-                break;
-        }
-        if (tipoViaEnum != null && tipoCalleEnum != null) {
-            Via via = new Via(idVia, tipoViaEnum, tipoCalleEnum, numeroRuta, nivelCongestion, null);
-            viaServicio.crearVia(via);
-            existe = viaServicio.existeVia(via.getIdVia());
-        } else {
+        TipoVia tipoViaEnum = viaServicio.getTipoVia(tipoVia);
+        TipoCalle tipoCalleEnum = viaServicio.getTipoCalle(tipoCalle);
+
+        if (tipoViaEnum == null || tipoCalleEnum == null || idVia <= 0 || numeroRuta <= 0 || nivelCongestion < 0 || nivelCongestion > 100) {
             return "Algun dato esta mal";
         }
-
-
-        if (existe == true) {
-            return "Registrado";
-        } else {
-            return "error";
+        if (viaServicio.existeVia(idVia)) {
+            return "Ya existe";
         }
 
+        Via via = new Via(idVia, tipoViaEnum, tipoCalleEnum, numeroRuta, nivelCongestion, null);
+        viaServicio.crearVia(via);
+
+        if (viaServicio.existeVia(idVia)) {
+            return "Registrado";
+        } else {
+            return "Error";
+        }
 
     }
 

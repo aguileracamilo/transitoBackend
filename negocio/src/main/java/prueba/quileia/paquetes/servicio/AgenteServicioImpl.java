@@ -36,7 +36,6 @@ public class AgenteServicioImpl implements AgenteServicio {
     public boolean estaCompleto(Agente a) {
         System.out.println(!a.getNombre().equals("") );
         if (!a.getNombre().equals("") && a.getExperienciaAnios() >= 0 && !a.getCodigo().equals("") && !a.getCodigoSecretaria().equals("")) {
-            System.out.println("entra");
             return true;
         }
         return false;
@@ -44,14 +43,15 @@ public class AgenteServicioImpl implements AgenteServicio {
     }
 
     public void actualizarAgente(Agente agente, int idVia, String codigoNuevo) {
+        if (estaCompleto(agente)) {
+            agenteRepo.save(agente);
+            if (idVia != 0) {
+                agenteRepo.actualizarVia(agente.getCodigo(), idVia);
+            }
+            if (codigoNuevo != agente.getCodigo() && codigoNuevo != "") {
 
-        agenteRepo.save(agente);
-        if (idVia != 0) {
-            agenteRepo.actualizarVia(agente.getCodigo(), idVia);
-        }
-        if (codigoNuevo != agente.getCodigo() && codigoNuevo != "") {
-
-            agenteRepo.actualizarCodigo(agente.getCodigo(), codigoNuevo);
+                agenteRepo.actualizarCodigo(agente.getCodigo(), codigoNuevo);
+            }
         }
     }
 
