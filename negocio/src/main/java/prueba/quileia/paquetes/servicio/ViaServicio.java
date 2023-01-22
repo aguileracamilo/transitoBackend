@@ -1,6 +1,5 @@
 package prueba.quileia.paquetes.servicio;
 
-import prueba.quileia.paquetes.entidades.Agente;
 import prueba.quileia.paquetes.entidades.TipoCalle;
 import prueba.quileia.paquetes.entidades.TipoVia;
 import prueba.quileia.paquetes.entidades.Via;
@@ -12,11 +11,18 @@ public interface ViaServicio {
 
     boolean existeVia(int codigoVia);
 
-    void crearVia(Via via,List<String> agentes);
+    Via crearVia(Via via, List<String> agentes);
 
     void eliminarVia(int idVia);
 
     TipoVia getTipoVia(String tipo);
+
     TipoCalle getTipoCalle(String tipo);
-    void actualizarAgente(Via via, List<String> agentes, int idNueva);
+
+    Via actualizarVia(Via via, List<String> agentes, int idNueva);
+
+    Via traerViaPorId(int idVia);
+
+    //Verifica si el agente tiene los datos que no pueden ser nulos
+    boolean estaCompleto(Via v);
 }

@@ -19,7 +19,7 @@ import java.util.List;
 public class Via {
     @Id
     @EqualsAndHashCode.Include
-    @Column(name = "idVia", length=10, nullable = false, unique = true)
+    @Column(name = "idVia", length = 10, nullable = false, unique = true)
     private int idVia;
 
     @Enumerated(EnumType.STRING)
@@ -37,12 +37,13 @@ public class Via {
     @Column(name = "nivelCongestion", nullable = false)
     private double nivelCongestion;
 
+    @OneToMany(mappedBy = "via", cascade = CascadeType.ALL)
     @JsonIgnore
-    @OneToMany(mappedBy = "viaAsignada")
+    private List<Historial> registrosVias;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "viaAsignada", cascade = CascadeType.ALL)
     private List<Agente> agentes;
-
-
-
 
 
 }

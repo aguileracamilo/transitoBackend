@@ -18,20 +18,16 @@ public class AgenteDTO {
     private String codigoSecretaria;
     private int viaAsignada;
 
-
-
     public AgenteDTO(Agente agente) {
         this.codigo = agente.getCodigo();
         this.nombre = agente.getNombre();
         this.experienciaAnios = agente.getExperienciaAnios();
         this.codigoSecretaria = agente.getCodigoSecretaria();
-        if(agente.getViaAsignada()!=null){
-            this.viaAsignada= agente.getViaAsignada().getIdVia();
-        }else{
-            this.viaAsignada=0;
+
+        if (agente.getViaAsignada() != null) {
+            this.viaAsignada = agente.getViaAsignada().getIdVia();
+        } else {
+            this.viaAsignada = 0;
         }
-
     }
-
-
 }

@@ -2,13 +2,13 @@ package prueba.quileia.paquetes.restController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import prueba.quileia.paquetes.entidades.Agente;
 import prueba.quileia.paquetes.entidades.TipoCalle;
 import prueba.quileia.paquetes.entidades.TipoVia;
 import prueba.quileia.paquetes.entidades.Via;
+import prueba.quileia.paquetes.servicio.AgenteServicio;
+import prueba.quileia.paquetes.servicio.HistorialServicio;
 import prueba.quileia.paquetes.servicio.ViaServicio;
 
 import java.util.List;
@@ -19,65 +19,76 @@ public class ViaRestController {
     @Autowired
     private ViaServicio viaServicio;
 
+    @Autowired
+    private AgenteServicio agenteServicio;
+
+    @Autowired
+    private HistorialServicio historialServicio;
+
 
     @CrossOrigin
     @GetMapping("/TodasVias")
     public List<Via> enviarVias() throws JsonProcessingException {
 
-        System.out.println("<aaaa");
         return viaServicio.enlistarVias();
-    }
-
-    @CrossOrigin
-    @GetMapping("/CrearVia")
-    public String envidarVias() {
-        System.out.println("entra");
-        return "Hola";
     }
 
     @CrossOrigin
     @PostMapping("/RegistrarVia")
     public String registrarVia(@RequestHeader("id_via") int idVia, @RequestHeader("tipo_via") String tipoVia, @RequestHeader("tipo_calle") String tipoCalle, @RequestHeader("numero_ruta") int numeroRuta, @RequestHeader("nivel_congestion") double nivelCongestion, @RequestHeader("agentes") List<String> agentesAsignados) {
         System.out.println(idVia + " " + tipoVia + " " + tipoCalle + " " + numeroRuta + " " + nivelCongestion);
-        boolean existe = false;
+        //Se encarga de asignar el valor correcto al enum
         TipoVia tipoViaEnum = viaServicio.getTipoVia(tipoVia);
         TipoCalle tipoCalleEnum = viaServicio.getTipoCalle(tipoCalle);
 
-        if (tipoViaEnum == null || tipoCalleEnum == null || idVia <= 0 || numeroRuta <= 0 || nivelCongestion < 0 || nivelCongestion > 100) {
-            return "Algun dato esta mal";
-        }
+        Via via = new Via(idVia, tipoViaEnum, tipoCalleEnum, numeroRuta, nivelCongestion, null, null);
+
         if (viaServicio.existeVia(idVia)) {
             return "Ya existe";
         }
+        if (!viaServicio.estaCompleto(via)) {
+            return "Algun dato esta mal";
+        }
+        //Se trae la via y los agentes para ser registrados en el historial
+        Via viaRegistrada = viaServicio.crearVia(via, agentesAsignados);
+        List<Agente> agentes = agenteServicio.obtenerAgentesPorCodigo(agentesAsignados);
 
-        Via via = new Via(idVia, tipoViaEnum, tipoCalleEnum, numeroRuta, nivelCongestion, null);
-        viaServicio.crearVia(via, agentesAsignados);
+        //Se asigna y se registra
+        agenteServicio.asignarAgentes(agentesAsignados, viaRegistrada);
+        historialServicio.registrarAsignacionAgentes(viaRegistrada, agentes);
 
         if (viaServicio.existeVia(idVia)) {
             return "Registrado";
         } else {
             return "Error";
         }
-
     }
 
     @CrossOrigin
     @PostMapping("/ActualizarVia")
     public String actualizarVia(@RequestHeader("id_nueva") int idNueva, @RequestHeader("id_via") int idVia, @RequestHeader("tipo_via") String tipoVia, @RequestHeader("tipo_calle") String tipoCalle, @RequestHeader("numero_ruta") int numeroRuta, @RequestHeader("nivel_congestion") double nivelCongestion, @RequestHeader("agentes") List<String> agentesAsignados) {
-        System.out.println(idVia + " " + tipoVia + " " + tipoCalle + " " + numeroRuta + " " + nivelCongestion);
-        System.out.println("bbbbbbbbbbbbbbbb"+agentesAsignados);
+
+        //Se encarga de asignar el valor correcto al enum
         TipoVia tipoViaEnum = viaServicio.getTipoVia(tipoVia);
         TipoCalle tipoCalleEnum = viaServicio.getTipoCalle(tipoCalle);
 
-        if (tipoViaEnum == null || tipoCalleEnum == null || idNueva < 0 || idVia <= 0 || numeroRuta <= 0 || nivelCongestion < 0 || nivelCongestion > 100) {
-            return "Algun dato esta mal";
-        }
+        Via via = new Via(idVia, tipoViaEnum, tipoCalleEnum, numeroRuta, nivelCongestion, null, null);
+
         if (!viaServicio.existeVia(idVia)) {
             return "No existe";
         }
+        if (!viaServicio.estaCompleto(via)) {
+            return "Algun dato esta mal";
+        }
 
-        Via via = new Via(idVia, tipoViaEnum, tipoCalleEnum, numeroRuta, nivelCongestion, null);
-        viaServicio.actualizarAgente(via, agentesAsignados, idNueva);
+        Via viaActualizada = viaServicio.actualizarVia(via, agentesAsignados, idNueva);
+        //Se trae antes de que se asignen los nuevos para evitar problemas
+        List<String> asignacionesNuevas = agenteServicio.traerAsignadosNuevos(agentesAsignados, via.getIdVia());
+        List<Agente> agentes = agenteServicio.obtenerAgentesPorCodigo(asignacionesNuevas);
+        //Se asigna y se registra en el historial
+        agenteServicio.asignarAgentes(agentesAsignados, viaActualizada);
+        historialServicio.registrarAsignacionAgentes(viaActualizada, agentes);
+
 
         if (viaServicio.existeVia((idVia == idNueva) ? idVia : idNueva)) {
             return "Actualizado";
@@ -91,17 +102,13 @@ public class ViaRestController {
     @PostMapping("/EliminarVia")
     public String eliminarAgente(@RequestHeader("id_via") int idVia) {
 
-        System.out.println(idVia);
         viaServicio.eliminarVia(idVia);
 
-        boolean existe = viaServicio.existeVia(idVia);
-
-        if (existe == true) {
+        if (!viaServicio.existeVia(idVia)) {
             return "Eliminado";
         } else {
             return "error";
         }
-
     }
 
 }
