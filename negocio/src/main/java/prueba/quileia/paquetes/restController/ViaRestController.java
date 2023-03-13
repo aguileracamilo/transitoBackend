@@ -36,14 +36,14 @@ public class ViaRestController {
     @CrossOrigin
     @PostMapping("/RegistrarVia")
     public String registrarVia(@RequestHeader("id_via") int idVia, @RequestHeader("tipo_via") String tipoVia, @RequestHeader("tipo_calle") String tipoCalle, @RequestHeader("numero_ruta") int numeroRuta, @RequestHeader("nivel_congestion") double nivelCongestion, @RequestHeader("agentes") List<String> agentesAsignados) {
-        System.out.println(idVia + " " + tipoVia + " " + tipoCalle + " " + numeroRuta + " " + nivelCongestion);
+
         //Se encarga de asignar el valor correcto al enum
         TipoVia tipoViaEnum = viaServicio.getTipoVia(tipoVia);
         TipoCalle tipoCalleEnum = viaServicio.getTipoCalle(tipoCalle);
 
         Via via = new Via(idVia, tipoViaEnum, tipoCalleEnum, numeroRuta, nivelCongestion, null, null);
 
-        if (viaServicio.existeVia(idVia)) {
+        if (viaServicio.existeVia(idVia) ||viaServicio.existeNumeroVia(idVia,numeroRuta,tipoCalleEnum)) {
             return "Ya existe";
         }
         if (!viaServicio.estaCompleto(via)) {
@@ -77,6 +77,9 @@ public class ViaRestController {
         if (!viaServicio.existeVia(idVia)) {
             return "No existe";
         }
+        if (viaServicio.existeNumeroVia(idVia, numeroRuta, tipoCalleEnum)) {
+            return "Ya existe";
+        }
         if (!viaServicio.estaCompleto(via)) {
             return "Algun dato esta mal";
         }
@@ -88,7 +91,6 @@ public class ViaRestController {
         //Se asigna y se registra en el historial
         agenteServicio.asignarAgentes(agentesAsignados, viaActualizada);
         historialServicio.registrarAsignacionAgentes(viaActualizada, agentes);
-
 
         if (viaServicio.existeVia((idVia == idNueva) ? idVia : idNueva)) {
             return "Actualizado";

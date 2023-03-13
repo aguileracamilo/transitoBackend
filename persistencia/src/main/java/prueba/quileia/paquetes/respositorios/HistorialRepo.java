@@ -20,4 +20,6 @@ public interface HistorialRepo extends JpaRepository<Historial, Integer> {
 
     @Query(value = "SELECT * FROM historial WHERE via_id=?1", nativeQuery = true)
     List<Historial> findByVia_id(int id);
+
+
 }

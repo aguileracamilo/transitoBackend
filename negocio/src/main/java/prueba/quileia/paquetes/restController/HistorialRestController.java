@@ -21,19 +21,35 @@ public class HistorialRestController {
     @Autowired
     private HistorialServicio historialServicio;
 
+    @Autowired
+    private  ViaServicio viaServicio;
+
 
     @CrossOrigin
     @GetMapping("/AgenteHistorial")
     public List<HistorialDTO> enviarHistorialAgentes(@RequestHeader("codigo") String codigoAgente) {
         List<HistorialDTO> a = historialServicio.historialToDTO(historialServicio.obtenerHistorialAgente(codigoAgente));
-        System.out.println(a);
+
         return a;
     }
 
     @CrossOrigin
     @GetMapping("/ViaHistorial")
-    public List<HistorialDTO> enviarHistorialVias(@RequestHeader("id_via") int idVia) {
+    public List<HistorialDTO> enviarHistorialVias(@RequestHeader("tipo_calle") String tipoCalle,@RequestHeader("numero_ruta") int numeroRuta) {
+        int  idVia;
 
-        return historialServicio.historialToDTO(historialServicio.obtenerHistorialVia(idVia));
+        if(tipoCalle.equalsIgnoreCase("CALLE")||tipoCalle.equalsIgnoreCase("CARRERA")){
+            idVia=viaServicio.traerIdViaPorDireccion(numeroRuta,tipoCalle);
+
+            return historialServicio.historialToDTO(historialServicio.obtenerHistorialVia(idVia));
+        }
+            return null;
+    }
+
+    @CrossOrigin
+    @GetMapping("/ViaHistorialPorId")
+    public List<HistorialDTO> enviarHistorialViaPorId(@RequestHeader("id_via") int idVia) {
+
+            return historialServicio.historialToDTO(historialServicio.obtenerHistorialVia(idVia));
     }
 }

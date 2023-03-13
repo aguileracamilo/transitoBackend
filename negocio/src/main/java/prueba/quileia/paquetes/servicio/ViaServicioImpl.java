@@ -24,8 +24,35 @@ public class ViaServicioImpl implements ViaServicio {
         } catch (Exception e) {
 
             e.printStackTrace();
-            return false;
+            return true;
         }
+
+    }
+
+    //Metodo para verificar si ya hay otra via que tiene esa direccion true para si existe ya otra via y false si no esta ocupada por otra
+    public boolean existeNumeroVia(int idVia, int numeroVia, TipoCalle tipoCalle) {
+
+        Via viaVerificar = viaRepo.buscarViaPorDireccion(numeroVia, tipoCalle.toString());
+
+        try {
+            //Si la via ya existe y existe una con esa direccion se valida si es la misma y entra
+            if (viaRepo.existsById(idVia) && viaVerificar != null && viaVerificar.getIdVia() == idVia) {
+
+                return false;
+            } else if (viaVerificar != null) {
+            //Se validó que no eran la misma via asi que si existe una con esa direccion se envia true y de lo contrario false
+
+                return true;
+            } else {
+
+                return false;
+            }
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return true;
+        }
+
 
     }
 
@@ -155,6 +182,13 @@ public class ViaServicioImpl implements ViaServicio {
             return null;
         }
         return null;
+    }
+    public int traerIdViaPorDireccion( int numeroRuta,String tipoCalle){
+        Via via= viaRepo.buscarViaPorDireccion(numeroRuta,tipoCalle);
+        if(via!=null){
+            return via.getIdVia();
+        }
+        return 0;
     }
 
 }

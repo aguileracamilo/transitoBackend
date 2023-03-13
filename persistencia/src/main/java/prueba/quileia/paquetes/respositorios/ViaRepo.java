@@ -25,5 +25,8 @@ public interface ViaRepo extends JpaRepository<Via, Integer> {
     @Query(value = "UPDATE historial SET via_id=?1 where via_id=?2", nativeQuery = true)
     void actualizarIdViaHistorial(int idNuevo, int idAnt);
 
+    @Query(value = "SELECT * FROM via where numero_ruta= ?1 and tipo_calle=?2", nativeQuery = true)
+    Via buscarViaPorDireccion(int numeroRuta, String tipoCalle);
+
 
 }

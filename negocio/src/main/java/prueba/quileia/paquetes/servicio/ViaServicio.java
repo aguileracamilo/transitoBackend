@@ -25,4 +25,8 @@ public interface ViaServicio {
 
     //Verifica si el agente tiene los datos que no pueden ser nulos
     boolean estaCompleto(Via v);
+
+    boolean existeNumeroVia(int idVia, int numeroVia, TipoCalle tipoCalle);
+
+    int traerIdViaPorDireccion(int numeroRuta, String tipoCalle);
 }
