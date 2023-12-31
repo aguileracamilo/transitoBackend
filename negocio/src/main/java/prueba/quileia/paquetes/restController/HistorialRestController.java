@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 public class HistorialRestController {
 
+
     @Autowired
     private HistorialServicio historialServicio;
 
